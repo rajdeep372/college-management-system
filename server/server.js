@@ -1,28 +1,34 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const cors = require('cors');
+require('dotenv').config(); // Make sure dotenv is configured at the top
 
 // Initialize Express app
 const app = express();
 
+// Enable CORS for all routes - This is important for cross-origin requests
+app.use(cors());
+
+// Init Middleware to parse JSON bodies
+app.use(express.json());
+
 // Connect to Database
 connectDB();
 
-// Init Middleware
-app.use(cors()); // Enable CORS for all routes
-app.use(express.json()); // Allows us to accept JSON data in the body
+// --- API Routes ---
+// This is a simple health check route to confirm the API is running
+app.get('/api', (req, res) => res.json({ msg: 'API is running successfully' }));
 
-// Define Routes
+// Define all other routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/notices', require('./routes/notices'));
-app.use('/api/messages', require('./routes/messages'));
 app.use('/api/student-auth', require('./routes/studentAuth'));
 app.use('/api/students', require('./routes/students'));
 app.use('/api/routines', require('./routes/routines'));
 app.use('/api/attendance', require('./routes/attendance'));
-app.use('/api/dashboard', require('./routes/dashboard')); 
+app.use('/api/messages', require('./routes/messages'));
+app.use('/api/notices', require('./routes/notices'));
+app.use('/api/dashboard', require('./routes/dashboard'));
 
-app.get('/', (req, res) => res.send('API Running'));
 
 const PORT = process.env.PORT || 5000;
 
